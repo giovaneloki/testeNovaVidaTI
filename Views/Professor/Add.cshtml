@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewBag.Title = "Add";
+}
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+
+            if (!$("#formCadastro").valid()) {
+                return;
+            }
+
+            SaveData();
+
+        });
+    });
+
+    function SaveData() {
+        var formData = new FormData;
+        formData.append("Nome", $("#txtNome").val());
+        $.ajax({
+            async: true,
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                if (data.success === true) {
+                    alert(data.message);
+
+                    window.location.href="../Home/Index"
+                }
+            },
+            error: function () {
+                alert('Ocorreu uma Falha ao Salvar o Novo Registro, tente novamente!');
+            }
+
+        });
+    }
+</script>
+<h4 style="text-align: center">Adicionar Professor</h4>
+<div class="container" style="width: 100%; margin-top:35px">
+    <form id="formCadastro">
+        <div class="form-group col-lg-12">
+            <label for="txtNome">Nome</label>
+            <input type="text" name="Nome" id="txtNome" class="form-control" required placeholder="Nome do professor" data-msg="Informe o nome do professor" />
+        </div>
+    </form>
+    <button style="margin-left:15px;" type="button" class="btn btn-success" id="btnSave">Confirmar</button>
+</div>

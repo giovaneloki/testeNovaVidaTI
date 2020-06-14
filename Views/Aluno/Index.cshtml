@@ -1,0 +1,128 @@
+﻿@model IEnumerable<TesteNovaVidaTI.Models.Aluno>
+@{
+    ViewBag.Title = "Index";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+
+            if (!$("#formImportacao").valid()) {
+                return;
+            }
+
+            ImportArquivo();
+
+        });
+    });
+
+    function ImportArquivo() {
+        var formData = new FormData;
+
+        formData.append("IdProfessor", $("#IdProfessor").val());
+        formData.append("arquivo", $('input[type=file]')[0].files[0]);
+
+        $.ajax({
+            url: "Importacao",
+            async: false,
+            type: "POST",
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                if (data.success === true) {
+                    alert(data.message);
+                    location.reload();
+                }
+            }
+        });
+
+        //window.location.href = "../Home/Index";
+
+
+    }
+
+    function RemoverAluno(IdAluno) {
+        if (confirm("Deseja seguir com a exclusão do aluno?")) {
+            var formData = new FormData;
+            formData.append("IdAluno", IdAluno);
+
+            $.ajax({
+                url: "RemoverAluno",
+                async: true,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (data) {
+                    if (data.success === true) {
+                        $("#Aluno-" + IdAluno).remove();
+
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+<h4 style="text-align: center">Gerenciar Alunos</h4>
+<div style="float: right; margin-top: -35px;">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#divImportacao" data-backdrop="static" data-keyboard="false">Importar Alunos</button>
+</div>
+<div class="container" style="width: 100%; margin-top:35px">
+    <table style="width: 100%" id="tbProfessores" class="table table-striped">
+        <thead>
+            <tr style="background-color:#3273a8 !important; color:#fff !important;">
+                <th style="text-align: center">Id</th>
+                <th style="text-align: center">Aluno</th>
+                <th style="text-align: center">Mensalidade</th>
+                <th style="text-align: center">Data de Vencimento</th>
+                <th style="text-align: center">Professor</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="Aluno-@item.IdAluno">
+                    <td style="text-align: center">@item.IdAluno</td>
+                    <td style="text-align: center">@item.Nome</td>
+                    <td style="text-align: center">@item.Mensalidade.ToString("c")</td>
+                    <td style="text-align: center">@item.DataVencimento.ToShortDateString()</td>
+                    <td style="text-align: center">@ViewBag.NomeProfessor</td>
+                    <td style="text-align: center;"><span title="Remover Aluno" style="cursor:pointer; font-size: 20px;" class="glyphicon glyphicon-trash" onclick="RemoverAluno(@item.IdAluno)"></span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="divImportacao" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Importar Alunos</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formImportacao">
+                    @*method="post" action="Importacao" enctype="multipart/form-data">*@
+                    <div class="container" style="width: 100%;">
+                        <div class="form-group col-lg-12">
+                            <label for="txtArquivo">Selecione o arquivo</label>
+                            <input type="file" name="arquivo" id="txtArquivo" class="form-control" required data-msg="selecione um arquivo para prosseguir" />
+                            <input type="hidden" name="IdProfessor" id="IdProfessor" value="@ViewBag.IdProfessor" />
+                        </div>
+                        <div class="form-group col-lg-12">
+                            <button id="btnSave" class="btn btn-success">Importar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                @*<button type="button" class="btn btn-success" id="btnImportar" data-dismiss="modal">Confirmar</button>*@
+            </div>
+        </div>
+    </div>
+</div>

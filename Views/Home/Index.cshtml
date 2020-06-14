@@ -1,0 +1,44 @@
+﻿@model IEnumerable<TesteNovaVidaTI.Models.Professor>
+@{
+    ViewBag.Title = "Início";
+
+}
+<script type="text/javascript">
+    function AddProfessor() {
+        window.location.href = "../Professor/Add";
+    }
+
+    function VerAlunos(IdProfessor) {
+        window.location.href = "../Aluno/Index?IdProfessor=" + IdProfessor;
+    }
+</script>
+
+<h4 style="text-align: center">Gerenciar Professores</h4>
+
+<div style="float: right; margin-top: -35px;">
+    <button type="button" class="btn btn-primary" onclick="AddProfessor()">Adicionar Professor</button>
+</div>
+
+<div class="container" style="width: 100%; margin-top:35px">
+    <table style="width: 100%" id="tbProfessores" class="table table-striped">
+        <thead>
+            <tr style="background-color:#3273a8 !important; color:#fff !important;">
+                <th style="text-align: center">Id</th>
+                <th style="text-align: center">Nome</th>
+                <th style="text-align: center">Data de Inclusão</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align: center">@item.IdProfessor</td>
+                    <td style="text-align: center">@item.Nome</td>
+                    <td style="text-align: center">@item.DataInclusao.ToShortDateString()</td>
+                    <td style="text-align: center;"><span title="Visualizar Alunos" style="cursor:pointer; font-size: 20px;" class="glyphicon glyphicon-user" onclick="VerAlunos(@item.IdProfessor)"></span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
